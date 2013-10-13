@@ -70,6 +70,14 @@
 <span id="userid" style="visibility:hidden;"><%= User.current.id %></span>
 <div id="taskboard">
 
+  <% if @sprint.sprint_start_date and @sprint.effective_date %>
+    <% if @sprint.completed? %>
+      <p><%= format_date(@sprint.sprint_start_date) %>-<%= format_date(@sprint.effective_date) %></p>
+    <% elsif @sprint.effective_date %>
+      <p><strong><%= due_date_distance_in_words(@sprint.effective_date) %></strong> (<%= format_date(@sprint.sprint_start_date) %>-<%= format_date(@sprint.effective_date) %>)</p>
+    <% end %>
+  <% end %>
+
 
   <table id="board_header" cellspacing="0">
     <tr>
