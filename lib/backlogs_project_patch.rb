@@ -217,7 +217,7 @@ module Backlogs
       def open_shared_sprints
         if Backlogs.setting[:sharing_enabled]
           order = Backlogs.setting[:sprint_sort_order] == 'desc' ? 'DESC' : 'ASC'
-          shared_versions.visible.scoped(:conditions => {:status => ['open', 'locked']}, :order => "sprint_start_date #{order}, effective_date #{order}").collect{|v| v.becomes(RbSprint) }
+          shared_versions.visible.scoped(:conditions => {:is_sprint => true, :status => ['open', 'locked']}, :order => "sprint_start_date #{order}, effective_date #{order}").collect{|v| v.becomes(RbSprint) }
         else #no backlog sharing
           RbSprint.open_sprints(self)
         end
@@ -227,7 +227,7 @@ module Backlogs
       def closed_shared_sprints
         if Backlogs.setting[:sharing_enabled]
           order = Backlogs.setting[:sprint_sort_order] == 'desc' ? 'DESC' : 'ASC'
-          shared_versions.visible.scoped(:conditions => {:status => ['closed']}, :order => "sprint_start_date #{order}, effective_date #{order}").collect{|v| v.becomes(RbSprint) }
+          shared_versions.visible.scoped(:conditions => {:is_sprint => true, :status => ['closed']}, :order => "sprint_start_date #{order}, effective_date #{order}").collect{|v| v.becomes(RbSprint) }
         else #no backlog sharing
           RbSprint.closed_sprints(self)
         end
@@ -288,6 +288,17 @@ module Backlogs
       # Return a list of sprints each project's stories can be dropped to on the master backlog.
       def droppable_sprints
          connection.select_all(_sql_for_droppables(Version.table_name))
+      end
+      
+      # Close all completed sprints on the project
+      def close_completed_sprints
+        Version.transaction do
+          RbSprint.open_sprints(self).keep_if{ |s| %w(open locked).include?(s.status)}.each do |sprint|
+            if sprint.completed?
+              sprint.update_attribute(:status, 'closed')
+            end
+          end
+        end
       end
 
 private

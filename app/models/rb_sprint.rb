@@ -4,7 +4,8 @@ class RbSprint < Version
   unloadable
 
   validate :start_and_end_dates
-
+  after_initialize :set_is_sprint
+  
   def start_and_end_dates
     errors.add(:base, "sprint_end_before_start") if self.effective_date && self.sprint_start_date && self.sprint_start_date >= self.effective_date
   end
@@ -24,7 +25,7 @@ class RbSprint < Version
                  sprint_start_date #{order},
                  CASE effective_date WHEN NULL THEN 1 ELSE 0 END #{order},
                  effective_date #{order}",
-      :conditions => [ "status = 'open' and project_id = ?", project.id ] #FIXME locked, too?
+      :conditions => [ "is_sprint = '1' and status = 'open' and project_id = ? ", project.id ] #FIXME locked, too?
     }
   }
 
@@ -36,7 +37,7 @@ class RbSprint < Version
                  sprint_start_date #{order},
                  CASE effective_date WHEN NULL THEN 1 ELSE 0 END #{order},
                  effective_date #{order}",
-      :conditions => [ "status = 'closed' and project_id = ?", project.id ]
+      :conditions => [ "is_sprint = '1' and status = 'closed' and project_id = ?", project.id ]
     }
   }
 
@@ -159,5 +160,9 @@ class RbSprint < Version
             RbStory.trackers + [RbTask.tracker],
             self.id]
       ) #.sort {|a,b| a.closed? == b.closed? ?  a.updated_on <=> b.updated_on : (a.closed? ? 1 : -1) }
+  end
+  
+  def set_is_sprint
+    self.is_sprint = true
   end
 end

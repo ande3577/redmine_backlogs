@@ -111,8 +111,8 @@ class RbSprintsController < RbApplicationController
   end
 
   def close_completed
-    @project.close_completed_versions
-
+    @project.close_completed_sprints
+    
     redirect_to :controller => 'rb_master_backlogs', :action => 'show', :project_id => @project
   end
   
