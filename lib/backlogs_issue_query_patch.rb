@@ -78,7 +78,7 @@ module Backlogs
         end
         @available_filters = @available_filters.merge(backlogs_filters)
       end
-
+      
       def available_columns_with_backlogs_issue_type
         @available_columns = available_columns_without_backlogs_issue_type
         return @available_columns if !show_backlogs_issue_items?(project) or @backlog_columns_included
