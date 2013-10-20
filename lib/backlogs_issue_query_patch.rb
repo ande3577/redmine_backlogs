@@ -68,7 +68,7 @@ module Backlogs
                              }
         end
 
-        if project
+        if project && project.rb_project_settings.show_releases?
           backlogs_filters["release_id"] = {
             :type => :list_optional,
             :name => l(:field_release),
@@ -78,7 +78,7 @@ module Backlogs
         end
         @available_filters = @available_filters.merge(backlogs_filters)
       end
-      
+
       def available_columns_with_backlogs_issue_type
         @available_columns = available_columns_without_backlogs_issue_type
         return @available_columns if !show_backlogs_issue_items?(project) or @backlog_columns_included
@@ -89,7 +89,8 @@ module Backlogs
         @available_columns << QueryColumn.new(:velocity_based_estimate)
         @available_columns << QueryColumn.new(:position, :sortable => "#{Issue.table_name}.position")
         @available_columns << QueryColumn.new(:remaining_hours, :sortable => "#{Issue.table_name}.remaining_hours")
-        @available_columns << QueryColumn.new(:release, :sortable => "#{RbRelease.table_name}.name", :groupable => true)
+        @available_columns << QueryColumn.new(:release, :sortable => "#{RbRelease.table_name}.name", :groupable => true) if project && project.rb_project_settings.show_releases?
+        @available_columns << QueryColumn.new(:backlogs_issue_type)
       end
 
       def sql_for_field_with_backlogs_issue_type(field, operator, value, db_table, db_field, is_custom_filter=false)
@@ -152,7 +153,6 @@ module Backlogs
       def add_available_column(column)
         self.available_columns << (column)
       end
-      
     end
   end
 end

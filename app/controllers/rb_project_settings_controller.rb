@@ -7,13 +7,16 @@ class RbProjectSettingsController < RbApplicationController
   def project_settings
     enabled = false
     enabled_scrum_stats = false
+    show_releases = false
     if request.post? and params[:settings]
       enabled = true if params[:settings]["show_stories_from_subprojects"]=="enabled"
       enabled_scrum_stats = true if params[:settings]["show_in_scrum_stats"]=="enabled"
+      show_releases = true if params[:settings]["show_releases"]=="enabled"
     end
     settings = @project.rb_project_settings
     settings.show_stories_from_subprojects = enabled
     settings.show_in_scrum_stats = enabled_scrum_stats
+    settings.show_releases = show_releases
     if settings.save
       flash[:notice] = t(:rb_project_settings_updated)
     else
