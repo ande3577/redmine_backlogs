@@ -71,7 +71,7 @@ module Backlogs
                              }
         end
 
-        if project
+        if project && project.rb_project_settings.show_releases?
           backlogs_filters["release_id"] = {
             :type => :list_optional,
             :name => l(:field_release),

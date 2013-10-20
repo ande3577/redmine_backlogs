@@ -31,6 +31,7 @@ en:
   backlogs_show_priority: "Show task priority on taskboard"
   backlogs_show_redmine_std_header: "Show redmine header in backlogs"
   backlogs_show_stories_from_subprojects_in_backlog: "Show stories from subprojects in backlog"
+  backlogs_show_releases: "Show releases"
   backlogs_sprint_card_settings: "Card printing"
   backlogs_sprint_sort_order: "Sort Sprints by start date"
   backlogs_sprint_sort_order_asc: ascending
